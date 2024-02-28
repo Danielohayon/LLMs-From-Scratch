@@ -1,4 +1,5 @@
 import torch
+import math
 from torch.utils.data import DataLoader
 from text8_dataset import Text8
 from model import GPT
@@ -46,15 +47,15 @@ optimizer = torch.optim.Adam(gpt.parameters())
 for epoch in range(200):
     losses = []
     i = 0
-    for x, y in tqdm.tqdm(dataloader, total=int(len(dataset)/batch_size)):
+    for x, y in tqdm.tqdm(dataloader, total=math.ceil(len(dataset)/batch_size)):
         x, y = x.to(device), y.to(device)
         B, T = x.shape
+        optimizer.zero_grad()
         output = gpt(x)
-        # output: B x T x vocab_size ; y: B x T x 1
+        # output: B x T x vocab_size ; y: B x T 
         loss = loss_fn(output.view(B*T, -1), y.view(B*T)) # devide by batch size? 
         loss.backward()
         optimizer.step()
-        optimizer.zero_grad()
         losses.append(float(loss.detach()))
         if i > 2000:
             print(torch.tensor(losses).mean())
