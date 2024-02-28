@@ -91,7 +91,6 @@ class SelfAttention(nn.Module):
 
         qk = torch.bmm(q, k.transpose(2,1)) / torch.sqrt(self.d_out) # B x T x T 
 
-        # TODO: Masking here won't completely zero the softmax result 
         tril = torch.ones(qk.shape).tril()
         qk[tril == 0] = float("-inf")
 
