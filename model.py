@@ -93,7 +93,6 @@ class SelfAttention(nn.Module):
 
         qk = torch.bmm(q, k.transpose(2,1)) / torch.sqrt(self.d_out) # B x T x T 
 
-        # tril = torch.ones(qk.shape).tril()
         tril = self.tril_matrix[:T, :T]
         qk[:, tril == 0] = float("-inf")
 
