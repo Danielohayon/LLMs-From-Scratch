@@ -62,7 +62,9 @@ for epoch in range(200):
             losses = []
             i = 0
             with torch.no_grad():
+                gpt.eval()
                 generate(gpt, tokenizer, "the world is ", device)
+                gpt.train()
         i += 1
         torch.save(gpt.state_dict(), "trained_models/gpt.pt")
         
