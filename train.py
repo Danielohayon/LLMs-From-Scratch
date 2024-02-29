@@ -64,6 +64,7 @@ for epoch in range(200):
             with torch.no_grad():
                 generate(gpt, tokenizer, "the world is ", device)
         i += 1
+        torch.save(gpt.state_dict(), "trained_models/gpt.pt")
         
 
 
