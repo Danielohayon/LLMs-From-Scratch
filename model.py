@@ -10,6 +10,7 @@ class GPT(nn.Module):
         self.positional_encoding = torch.nn.Embedding(max_seq_len, dim)
 
         self.device = device
+        self.register_buffer('positions', torch.arange(max_seq_len))
 
         self.decoder_blocks = nn.ModuleList([DecoderBlock(dim, num_heads) for _ in range(num_blocks)])
         self.linear = nn.Linear(dim, vocab_size)
@@ -17,8 +18,7 @@ class GPT(nn.Module):
     def forward(self, x):
         x = self.token_embedding(x)
         # x: B x T x C 
-        positions = torch.tensor(list(range(x.shape[1]))).to(self.device)
-        position_emb = self.positional_encoding(positions).expand(x.shape[0], -1, -1)
+        position_emb = self.positional_encoding(self.positions[:x.shape[1]]).expand(x.shape[0], -1, -1)
         x = x + position_emb
         for decoder_block in self.decoder_blocks:
             x = decoder_block(x) # B x T x C 
